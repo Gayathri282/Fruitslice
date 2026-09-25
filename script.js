@@ -678,7 +678,7 @@ function checkLevelUp() {
     
     levelBanner.textContent = `⭐ LEVEL ${level}! ⭐`;
     levelBanner.classList.add('show');
-    setTimeout(() => levelBanner.classList.remove('show'), 1200);
+    setTimeout(() => levelBanner.classList.remove('show'), 2000);
 
     for (let i = 0; i < 35; i++) {
       particles.push({
