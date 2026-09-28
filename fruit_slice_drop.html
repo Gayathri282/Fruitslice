@@ -38,10 +38,28 @@
 
   <!-- Start Screen Overlay -->
   <div class="overlay" id="startOverlay">
-    <div class="modal-card">
-      <div class="card-icon">🍉</div>
-      <h1>FRUIT SLICE DROP</h1>
-      <p class="modal-desc">Slash sweet child-friendly fruits, trigger super combos, and level up! Avoid sneaky bombs!</p>
+    <div class="modal-card poster-card">
+      <!-- 3D Poster Logo Title -->
+      <div class="poster-logo">
+        <div class="logo-word word-fruit">
+          <span>F</span><span>R</span><span>U</span><span>I</span><span>T</span>
+          <span class="leaf-badge">🍃</span>
+        </div>
+        <div class="logo-word word-slice">
+          <span>S</span><span>L</span><span>I</span><span>C</span><span>E</span>
+        </div>
+      </div>
+
+      <!-- Cute Floating Fruits Showcase Row -->
+      <div class="fruit-showcase">
+        <span class="showcase-fruit f-apple">🍎</span>
+        <span class="showcase-fruit f-watermelon">🍉</span>
+        <span class="showcase-fruit f-orange">🍊</span>
+        <span class="showcase-fruit f-strawberry">🍓</span>
+        <span class="showcase-fruit f-pineapple">🍍</span>
+      </div>
+
+      <p class="modal-desc">Slash sweet fruits, trigger super combos, and level up! Avoid sneaky bombs!</p>
       <button class="btn-primary" id="btnStart">PLAY NOW!</button>
       <div class="tip-text">Tap anywhere, swipe, or press Spacebar</div>
     </div>
@@ -49,9 +67,9 @@
 
   <!-- Pause Screen Overlay -->
   <div class="overlay hidden" id="pauseOverlay">
-    <div class="modal-card">
+    <div class="modal-card poster-card">
       <div class="card-icon">⏸️</div>
-      <h1>GAME PAUSED</h1>
+      <h1 class="poster-heading">GAME PAUSED</h1>
       <p class="modal-desc">Take a little breather! Ready to get back into the fruit slicing action?</p>
       <button class="btn-primary" id="btnResume">RESUME GAME</button>
     </div>
@@ -59,9 +77,9 @@
 
   <!-- Game Over Overlay -->
   <div class="overlay hidden" id="gameOverOverlay">
-    <div class="modal-card">
+    <div class="modal-card poster-card">
       <div class="card-icon">🎉</div>
-      <h1>GREAT JOB!</h1>
+      <h1 class="poster-heading">GREAT JOB!</h1>
       <p class="modal-desc" id="gameOverDesc">Game Over! You played awesome!</p>
       
       <div class="stats-grid">
