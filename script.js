@@ -1,4 +1,4 @@
-// Fruit Slice Drop - Upbeat Cheerful Audio & Cute Realistic Fruit Engine
+// Fruit Slice Drop - Upbeat Cheerful Audio & Minimal Playfield-First Engine
 
 // --- Upbeat Procedural BGM & Sound Engine (Web Audio API) ---
 class SoundEngine {
@@ -21,26 +21,24 @@ class SoundEngine {
     }
   }
 
-  // Play a cheerful, catchy polyphonic arcade melody (C - G - Am - F Progression)
   startBGM() {
     this.init();
     if (!this.ctx || this.isPlayingBgm) return;
     this.isPlayingBgm = true;
     this.stepIndex = 0;
 
-    // Cheerful C Major Pentatonic & Diatonic Melody Notes (Hz)
     const melody = [
-      523.25, 659.25, 783.99, 1046.50, 783.99, 659.25, 523.25, 659.25, // C Major
-      493.88, 587.33, 783.99, 987.77,  783.99, 587.33, 493.88, 587.33, // G Major
-      440.00, 523.25, 659.25, 880.00,  659.25, 523.25, 440.00, 523.25, // A Minor
-      349.23, 440.00, 523.25, 698.46,  880.00, 698.46, 523.25, 440.00  // F Major
+      523.25, 659.25, 783.99, 1046.50, 783.99, 659.25, 523.25, 659.25,
+      493.88, 587.33, 783.99, 987.77,  783.99, 587.33, 493.88, 587.33,
+      440.00, 523.25, 659.25, 880.00,  659.25, 523.25, 440.00, 523.25,
+      349.23, 440.00, 523.25, 698.46,  880.00, 698.46, 523.25, 440.00
     ];
 
     const bass = [
-      130.81, 130.81, 196.00, 130.81, // C
-      98.00,  98.00,  146.83, 98.00,  // G
-      110.00, 110.00, 164.81, 110.00, // Am
-      87.31,  87.31,  130.81, 87.31   // F
+      130.81, 130.81, 196.00, 130.81,
+      98.00,  98.00,  146.83, 98.00,
+      110.00, 110.00, 164.81, 110.00,
+      87.31,  87.31,  130.81, 87.31
     ];
 
     const playStep = () => {
@@ -50,7 +48,6 @@ class SoundEngine {
       const idx = this.stepIndex % melody.length;
       const bassIdx = Math.floor(this.stepIndex / 2) % bass.length;
 
-      // 1. Bright Lead Marimba Synth
       const noteFreq = melody[idx];
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
@@ -58,7 +55,7 @@ class SoundEngine {
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(noteFreq, now);
 
-      gain.gain.setValueAtTime(0.06, now);
+      gain.gain.setValueAtTime(0.05, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
 
       osc.connect(gain);
@@ -67,14 +64,13 @@ class SoundEngine {
       osc.start(now);
       osc.stop(now + 0.19);
 
-      // 2. Secondary Harmony Chime (on quarter notes)
       if (idx % 2 === 0) {
         const harmOsc = this.ctx.createOscillator();
         const harmGain = this.ctx.createGain();
         harmOsc.type = 'sine';
         harmOsc.frequency.setValueAtTime(noteFreq * 1.5, now);
 
-        harmGain.gain.setValueAtTime(0.03, now);
+        harmGain.gain.setValueAtTime(0.025, now);
         harmGain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
 
         harmOsc.connect(harmGain);
@@ -84,7 +80,6 @@ class SoundEngine {
         harmOsc.stop(now + 0.23);
       }
 
-      // 3. Bouncy Bassline (on beats)
       if (this.stepIndex % 2 === 0) {
         const bFreq = bass[bassIdx];
         const bOsc = this.ctx.createOscillator();
@@ -93,7 +88,7 @@ class SoundEngine {
         bOsc.type = 'sine';
         bOsc.frequency.setValueAtTime(bFreq, now);
 
-        bGain.gain.setValueAtTime(0.08, now);
+        bGain.gain.setValueAtTime(0.07, now);
         bGain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
 
         bOsc.connect(bGain);
@@ -103,26 +98,8 @@ class SoundEngine {
         bOsc.stop(now + 0.33);
       }
 
-      // 4. Cheerful Percussive Pop Rhythm
-      if (this.stepIndex % 4 === 2) {
-        const popOsc = this.ctx.createOscillator();
-        const popGain = this.ctx.createGain();
-        popOsc.type = 'sine';
-        popOsc.frequency.setValueAtTime(800, now);
-        popOsc.frequency.exponentialRampToValueAtTime(150, now + 0.05);
-
-        popGain.gain.setValueAtTime(0.04, now);
-        popGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
-
-        popOsc.connect(popGain);
-        popGain.connect(this.ctx.destination);
-
-        popOsc.start(now);
-        popOsc.stop(now + 0.06);
-      }
-
       this.stepIndex++;
-      this.bgmTimer = setTimeout(playStep, 170); // Upbeat 140 BPM tempo
+      this.bgmTimer = setTimeout(playStep, 170);
     };
 
     playStep();
@@ -136,7 +113,6 @@ class SoundEngine {
     }
   }
 
-  // Subtle blade swipe / movement sound
   playSwipeSound() {
     this.init();
     if (!this.ctx) return;
@@ -158,7 +134,6 @@ class SoundEngine {
     osc.stop(now + 0.06);
   }
 
-  // Fruit slice tone
   playSliceSound(combo = 1) {
     this.init();
     if (!this.ctx) return;
@@ -173,7 +148,7 @@ class SoundEngine {
     osc.frequency.setValueAtTime(pitch, now);
     osc.frequency.exponentialRampToValueAtTime(pitch * 1.6, now + 0.09);
 
-    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.setValueAtTime(0.14, now);
     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
 
     osc.connect(gain);
@@ -182,12 +157,11 @@ class SoundEngine {
     osc.start(now);
     osc.stop(now + 0.11);
 
-    // Sweet chime
     const chime = this.ctx.createOscillator();
     const chimeGain = this.ctx.createGain();
     chime.type = 'triangle';
     chime.frequency.setValueAtTime(950 + combo * 120, now + 0.02);
-    chimeGain.gain.setValueAtTime(0.12, now + 0.02);
+    chimeGain.gain.setValueAtTime(0.1, now + 0.02);
     chimeGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
 
     chime.connect(chimeGain);
@@ -207,7 +181,7 @@ class SoundEngine {
       const gain = this.ctx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(freq, now + idx * 0.04);
-      gain.gain.setValueAtTime(0.12, now + idx * 0.04);
+      gain.gain.setValueAtTime(0.1, now + idx * 0.04);
       gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.04 + 0.16);
 
       osc.connect(gain);
@@ -232,7 +206,7 @@ class SoundEngine {
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(freq, now + idx * 0.07);
 
-      gain.gain.setValueAtTime(0.15, now + idx * 0.07);
+      gain.gain.setValueAtTime(0.12, now + idx * 0.07);
       gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.28);
 
       osc.connect(gain);
@@ -258,7 +232,7 @@ class SoundEngine {
       osc.frequency.setValueAtTime(freq, now + idx * 0.11);
       osc.frequency.exponentialRampToValueAtTime(freq * 0.8, now + idx * 0.11 + 0.1);
 
-      gain.gain.setValueAtTime(0.16, now + idx * 0.11);
+      gain.gain.setValueAtTime(0.14, now + idx * 0.11);
       gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.11 + 0.11);
 
       osc.connect(gain);
@@ -272,29 +246,34 @@ class SoundEngine {
 
 const audio = new SoundEngine();
 
-// --- Canvas & Core Setup ---
+// --- Canvas & Core Elements ---
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 const scoreElem = document.getElementById('scoreDisplay');
+const bestScoreElem = document.getElementById('bestScoreDisplay');
 const comboElem = document.getElementById('comboDisplay');
+const comboContainer = document.getElementById('comboContainer');
 const levelElem = document.getElementById('levelDisplay');
 
-const popNotice = document.getElementById('popNotice');
-const levelBanner = document.getElementById('levelBanner');
+const levelToast = document.getElementById('levelToast');
 
-const startOverlay = document.getElementById('startOverlay');
+const helpOverlay = document.getElementById('helpOverlay');
 const pauseOverlay = document.getElementById('pauseOverlay');
 const gameOverOverlay = document.getElementById('gameOverOverlay');
 
-const btnStart = document.getElementById('btnStart');
+const btnHelp = document.getElementById('btnHelp');
+const btnCloseHelp = document.getElementById('btnCloseHelp');
+const btnGotIt = document.getElementById('btnGotIt');
 const btnPause = document.getElementById('btnPause');
 const btnResume = document.getElementById('btnResume');
 const btnRestart = document.getElementById('btnRestart');
 
 const finalScoreElem = document.getElementById('finalScore');
+const finalBestElem = document.getElementById('finalBest');
 const finalLevelElem = document.getElementById('finalLevel');
 const gameOverDesc = document.getElementById('gameOverDesc');
+const gameOverTitle = document.getElementById('gameOverTitle');
 
 let W = window.innerWidth;
 let H = window.innerHeight;
@@ -303,6 +282,7 @@ let DPR = Math.min(window.devicePixelRatio || 1, 2);
 let isRunning = false;
 let isPaused = false;
 let score = 0;
+let bestScore = parseInt(localStorage.getItem('fruit_slice_best') || '0', 10);
 let combo = 0;
 let level = 1;
 let lastTime = 0;
@@ -316,8 +296,8 @@ let gameObjects = [];
 let slicedHalves = [];
 let particles = [];
 let slashes = [];
+let floatingNotices = [];
 
-// Poster Artwork Inspired Fruit Definitions
 const FRUIT_TYPES = [
   { name: 'apple', score: 10, radius: 38, fleshColor: '#fef08a', skinColor: '#ff2e4d', face: 'happy' },
   { name: 'watermelon', score: 15, radius: 46, fleshColor: '#e11d48', skinColor: '#15803d', face: 'smile' },
@@ -340,14 +320,12 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-// --- Cute Cute Face Renderer ---
 function drawCuteFace(r, expression = 'happy') {
   ctx.save();
   const eyeOffset = r * 0.32;
   const eyeY = -r * 0.12;
 
   if (expression === 'surprised') {
-    // >_< or Open Mouth Face
     ctx.strokeStyle = '#1e293b';
     ctx.lineWidth = 3.5;
     ctx.beginPath();
@@ -363,28 +341,24 @@ function drawCuteFace(r, expression = 'happy') {
     return;
   }
 
-  // Shiny Kawaii Eyes
   ctx.fillStyle = '#1e293b';
   ctx.beginPath();
   ctx.arc(-eyeOffset, eyeY, 5.5, 0, Math.PI * 2);
   ctx.arc(eyeOffset, eyeY, 5.5, 0, Math.PI * 2);
   ctx.fill();
 
-  // White Pupil Catchlight
   ctx.fillStyle = '#ffffff';
   ctx.beginPath();
   ctx.arc(-eyeOffset - 1.8, eyeY - 1.8, 2.2, 0, Math.PI * 2);
   ctx.arc(eyeOffset - 1.8, eyeY - 1.8, 2.2, 0, Math.PI * 2);
   ctx.fill();
 
-  // Rosy Blushing Cheeks
   ctx.fillStyle = 'rgba(244, 114, 182, 0.75)';
   ctx.beginPath();
   ctx.arc(-eyeOffset - 5, r * 0.15, 6.5, 0, Math.PI * 2);
   ctx.arc(eyeOffset + 5, r * 0.15, 6.5, 0, Math.PI * 2);
   ctx.fill();
 
-  // Sweet Curved Smile
   ctx.beginPath();
   ctx.arc(0, r * 0.08, 7.5, 0.15, Math.PI - 0.15);
   ctx.strokeStyle = '#1e293b';
@@ -395,7 +369,6 @@ function drawCuteFace(r, expression = 'happy') {
   ctx.restore();
 }
 
-// --- Combined Realistic + Cute Fruit Renderer ---
 function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) {
   ctx.save();
   ctx.translate(x, y);
@@ -408,7 +381,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
   }
 
   if (isBomb) {
-    // Gunmetal Metallic Bomb with Cheeky Face & Sparks
     const bGrad = ctx.createRadialGradient(-r * 0.3, -r * 0.3, r * 0.1, 0, 0, r);
     bGrad.addColorStop(0, '#94a3b8');
     bGrad.addColorStop(0.3, '#334155');
@@ -423,7 +395,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
     ctx.strokeStyle = '#64748b';
     ctx.stroke();
 
-    // Metallic Cap & Fuse
     ctx.fillStyle = '#d97706';
     ctx.fillRect(-6, -r - 4, 12, 6);
 
@@ -434,7 +405,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
     ctx.lineWidth = 3.5;
     ctx.stroke();
 
-    // Sparkle top
     const sparkGrad = ctx.createRadialGradient(18, -r - 22, 1, 18, -r - 22, 10);
     sparkGrad.addColorStop(0, '#ffffff');
     sparkGrad.addColorStop(0.4, '#fde047');
@@ -446,7 +416,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
     ctx.fillStyle = sparkGrad;
     ctx.fill();
 
-    // Winking Cheeky Bomb Face
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
     ctx.arc(-9, -4, 5.5, 0, Math.PI * 2);
@@ -456,7 +425,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
     ctx.arc(-9, -4, 2.8, 0, Math.PI * 2);
     ctx.fill();
 
-    // Wink eye right
     ctx.beginPath();
     ctx.moveTo(5, -7);
     ctx.lineTo(13, -1);
@@ -474,7 +442,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
     return;
   }
 
-  // Fruit Main Body with Poster 3D Shading
   if (type.name === 'watermelon') {
     const grad = ctx.createRadialGradient(-r * 0.3, -r * 0.3, r * 0.1, 0, 0, r);
     grad.addColorStop(0, '#4ade80');
@@ -486,7 +453,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
     ctx.fillStyle = grad;
     ctx.fill();
 
-    // Dark Wavy Stripes
     ctx.strokeStyle = '#042911';
     ctx.lineWidth = 5;
     for (let i = -2; i <= 2; i++) {
@@ -496,7 +462,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
       ctx.stroke();
     }
 
-    // Curly Vine Stem
     ctx.beginPath();
     ctx.moveTo(0, -r + 4);
     ctx.quadraticCurveTo(6, -r - 12, 12, -r - 8);
@@ -516,7 +481,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
     ctx.fillStyle = grad;
     ctx.fill();
 
-    // Stem & Leaf
     ctx.beginPath();
     ctx.moveTo(0, -r + 6);
     ctx.quadraticCurveTo(4, -r - 8, 8, -r - 12);
@@ -540,13 +504,11 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
     ctx.fillStyle = grad;
     ctx.fill();
 
-    // Leaf Cap
     ctx.beginPath();
     ctx.ellipse(6, -r - 4, 5, 10, 0.5, 0, Math.PI * 2);
     ctx.fillStyle = '#22c55e';
     ctx.fill();
 
-    // Dimple Pores
     ctx.fillStyle = 'rgba(110, 37, 0, 0.22)';
     for (let i = 0; i < 12; i++) {
       const px = (Math.sin(i * 1.7) * r * 0.68);
@@ -556,7 +518,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
       ctx.fill();
     }
   } else if (type.name === 'pineapple') {
-    // Cute Chubby Pineapple Body (Oblong Ellipse with Radial Shading)
     const bodyGrad = ctx.createRadialGradient(-r * 0.25, -r * 0.3, r * 0.1, 0, 0, r * 1.15);
     bodyGrad.addColorStop(0, '#fffa96');
     bodyGrad.addColorStop(0.35, '#ffba00');
@@ -568,7 +529,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
     ctx.fillStyle = bodyGrad;
     ctx.fill();
 
-    // Soft Cute Scale Pattern & Diamond Texture
     ctx.save();
     ctx.beginPath();
     ctx.ellipse(0, 4, r * 0.94, r * 1.14, 0, 0, Math.PI * 2);
@@ -588,7 +548,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
       ctx.stroke();
     }
 
-    // Cute Scale Center Highlight Dots
     ctx.fillStyle = 'rgba(255, 245, 150, 0.55)';
     for (let row = -2; row <= 2; row++) {
       for (let col = -2; col <= 2; col++) {
@@ -603,7 +562,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
     }
     ctx.restore();
 
-    // Multi-Layered Fan of Spiky Green Leaves Crown
     const leafColors = ['#14532d', '#15803d', '#22c55e', '#4ade80'];
     const leaves = [
       { x: -16, y: -r - 12, angle: -0.45, len: 26, w: 7.5, col: 0 },
@@ -627,7 +585,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      // Leaf specular shine
       ctx.beginPath();
       ctx.moveTo(0, 0);
       ctx.quadraticCurveTo(leaf.w * 0.4, -leaf.len * 0.5, 0, -leaf.len * 0.8);
@@ -647,7 +604,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
     ctx.fillStyle = grad;
     ctx.fill();
 
-    // Fuzzy specks
     ctx.fillStyle = 'rgba(69, 26, 3, 0.4)';
     for (let i = 0; i < 15; i++) {
       const kx = (Math.sin(i * 2.1) * r * 0.75);
@@ -670,7 +626,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
     ctx.fillStyle = grad;
     ctx.fill();
 
-    // Seeds
     ctx.fillStyle = '#fde047';
     for (let row = -2; row <= 2; row++) {
       for (let col = -2; col <= 2; col++) {
@@ -682,7 +637,6 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
       }
     }
 
-    // Leafy Top Cap
     ctx.fillStyle = '#16a34a';
     for (let i = 0; i < 5; i++) {
       ctx.beginPath();
@@ -716,19 +670,15 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
     ctx.stroke();
   }
 
-  // Specular Glossy Highlight Curve
   ctx.beginPath();
   ctx.ellipse(-r * 0.35, -r * 0.35, r * 0.3, r * 0.15, -Math.PI / 4, 0, Math.PI * 2);
   ctx.fillStyle = 'rgba(255, 255, 255, 0.48)';
   ctx.fill();
 
-  // Render Cute Expressive Face!
   if (halfSide === 0) {
     drawCuteFace(r, type.face || 'happy');
   } else {
-    // Sliced Half Interior Flesh
     if (type.name === 'orange') {
-      // Detailed Poster Orange Segments
       ctx.beginPath();
       ctx.arc(0, 0, r * 0.88, 0, Math.PI * 2);
       ctx.fillStyle = '#ffaa00';
@@ -754,13 +704,11 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
       ctx.fillStyle = '#fef08a';
       ctx.fill();
     } else if (type.name === 'pineapple') {
-      // Juicy Pineapple Interior Flesh
       ctx.beginPath();
       ctx.ellipse(0, 4, r * 0.88, r * 1.05, 0, 0, Math.PI * 2);
       ctx.fillStyle = '#ffe600';
       ctx.fill();
 
-      // Pineapple Core Star
       ctx.beginPath();
       ctx.ellipse(0, 4, r * 0.3, r * 0.38, 0, 0, Math.PI * 2);
       ctx.fillStyle = '#fff9a6';
@@ -777,18 +725,36 @@ function drawCuteRealisticFruit(x, y, r, type, isBomb, angle = 0, halfSide = 0) 
       ctx.stroke();
     }
 
-    // Draw surprised expression on cut half!
     drawCuteFace(r * 0.85, 'surprised');
   }
 
   ctx.restore();
 }
 
+// --- Floating Small Action Notifications ---
+function addFloatingNotice(text, x, y, color = '#ffe600') {
+  floatingNotices.push({
+    text,
+    x,
+    y,
+    color,
+    vy: -70,
+    life: 0.65,
+    maxLife: 0.65
+  });
+}
+
 // --- Game Loop Logic ---
 function updateHUD() {
   scoreElem.textContent = score;
-  comboElem.textContent = combo;
+  bestScoreElem.textContent = bestScore;
   levelElem.textContent = level;
+  if (combo > 1) {
+    comboElem.textContent = `${combo}x`;
+    comboContainer.classList.remove('hidden');
+  } else {
+    comboContainer.classList.add('hidden');
+  }
 }
 
 function resetGame() {
@@ -799,6 +765,7 @@ function resetGame() {
   slicedHalves = [];
   particles = [];
   slashes = [];
+  floatingNotices = [];
   spawnTimer = 0.2;
   bladeX = W / 2;
   bladeDir = 1;
@@ -809,25 +776,42 @@ function startGame() {
   resetGame();
   isRunning = true;
   isPaused = false;
-  startOverlay.classList.add('hidden');
-  pauseOverlay.classList.add('hidden');
-  gameOverOverlay.classList.add('hidden');
+  if (helpOverlay) helpOverlay.classList.add('hidden');
+  if (pauseOverlay) pauseOverlay.classList.add('hidden');
+  if (gameOverOverlay) gameOverOverlay.classList.add('hidden');
   audio.startBGM();
   lastTime = performance.now();
   requestAnimationFrame(gameLoop);
+}
+
+function openHelp() {
+  if (!isRunning) return;
+  isPaused = true;
+  audio.stopBGM();
+  if (helpOverlay) helpOverlay.classList.remove('hidden');
+}
+
+function closeHelp() {
+  if (helpOverlay) helpOverlay.classList.add('hidden');
+  if (isRunning) {
+    isPaused = false;
+    audio.startBGM();
+    lastTime = performance.now();
+    requestAnimationFrame(gameLoop);
+  }
 }
 
 function pauseGame() {
   if (!isRunning) return;
   isPaused = true;
   audio.stopBGM();
-  pauseOverlay.classList.remove('hidden');
+  if (pauseOverlay) pauseOverlay.classList.remove('hidden');
 }
 
 function resumeGame() {
   if (!isRunning) return;
   isPaused = false;
-  pauseOverlay.classList.add('hidden');
+  if (pauseOverlay) pauseOverlay.classList.add('hidden');
   audio.startBGM();
   lastTime = performance.now();
   requestAnimationFrame(gameLoop);
@@ -839,30 +823,26 @@ function checkLevelUp() {
     level = newLevel;
     audio.playLevelUpSound();
     
-    levelBanner.textContent = `⭐ LEVEL ${level}! ⭐`;
-    levelBanner.classList.add('show');
-    setTimeout(() => levelBanner.classList.remove('show'), 2000);
+    if (levelToast) {
+      levelToast.textContent = `⭐ LEVEL ${level}!`;
+      levelToast.classList.remove('hidden');
+      setTimeout(() => levelToast.classList.add('hidden'), 1600);
+    }
 
-    for (let i = 0; i < 35; i++) {
+    addFloatingNotice(`⭐ LEVEL ${level}!`, W / 2, H * 0.35, '#38bdf8');
+
+    for (let i = 0; i < 25; i++) {
       particles.push({
         x: W / 2,
         y: H / 3,
-        vx: -220 + Math.random() * 440,
-        vy: -320 + Math.random() * 220,
-        life: 1.2,
+        vx: -200 + Math.random() * 400,
+        vy: -300 + Math.random() * 200,
+        life: 1.0,
         color: ['#f43f5e', '#3b82f6', '#eab308', '#a855f7', '#22c55e'][Math.floor(Math.random() * 5)],
         char: '⭐'
       });
     }
   }
-}
-
-function triggerPop(text) {
-  popNotice.textContent = text;
-  popNotice.classList.remove('show');
-  void popNotice.offsetWidth;
-  popNotice.classList.add('show');
-  setTimeout(() => popNotice.classList.remove('show'), 350);
 }
 
 function spawnFruit() {
@@ -934,9 +914,12 @@ function sliceAction(customX, customY) {
       audio.playSliceSound(combo);
       if (combo > 2) audio.playComboSound();
 
-      triggerPop(combo > 1 ? `${combo}x COMBO! 🎉` : 'NICE SLICE! 🍉');
+      // Temporary Small Floating Action Feedback
+      addFloatingNotice(`+${earned}`, obj.x, obj.y, obj.type.skinColor || '#ffe600');
+      if (combo > 1) {
+        addFloatingNotice(`${combo}x COMBO!`, obj.x, obj.y - 25, '#ec4899');
+      }
 
-      // Create Sliced Halves splitting away
       slicedHalves.push({
         x: obj.x,
         y: obj.y,
@@ -981,11 +964,18 @@ function gameOver(title, desc) {
   isRunning = false;
   audio.stopBGM();
 
-  finalScoreElem.textContent = score;
-  finalLevelElem.textContent = level;
-  gameOverDesc.textContent = desc;
+  if (score > bestScore) {
+    bestScore = score;
+    localStorage.setItem('fruit_slice_best', bestScore);
+  }
 
-  gameOverOverlay.classList.remove('hidden');
+  if (finalScoreElem) finalScoreElem.textContent = score;
+  if (finalBestElem) finalBestElem.textContent = bestScore;
+  if (finalLevelElem) finalLevelElem.textContent = level;
+  if (gameOverTitle) gameOverTitle.textContent = title;
+  if (gameOverDesc) gameOverDesc.textContent = desc;
+
+  if (gameOverOverlay) gameOverOverlay.classList.remove('hidden');
 }
 
 function update(dt) {
@@ -1043,21 +1033,25 @@ function update(dt) {
   }
   particles = particles.filter(p => p.life > 0);
 
+  for (const n of floatingNotices) {
+    n.y += n.vy * dt;
+    n.life -= dt;
+  }
+  floatingNotices = floatingNotices.filter(n => n.life > 0);
+
   updateHUD();
 }
 
 function drawBackground() {
-  // Poster Deep Royal Purple Background Gradient
   const grad = ctx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, '#1a0736');
-  grad.addColorStop(0.5, '#2e1059');
-  grad.addColorStop(1, '#16042e');
+  grad.addColorStop(0, '#15062c');
+  grad.addColorStop(0.5, '#290e50');
+  grad.addColorStop(1, '#120427');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, H);
 
-  // Soft Glowing Purple Bokeh Circles
   ctx.save();
-  ctx.fillStyle = 'rgba(168, 85, 247, 0.12)';
+  ctx.fillStyle = 'rgba(168, 85, 247, 0.11)';
   for (let i = 0; i < 10; i++) {
     const bubbleX = (i * 190 + Date.now() * 0.015) % (W + 160) - 80;
     const bubbleY = (120 + i * 130) % H;
@@ -1067,8 +1061,7 @@ function drawBackground() {
     ctx.fill();
   }
 
-  // Soft Floating Stars
-  ctx.fillStyle = 'rgba(253, 224, 71, 0.4)';
+  ctx.fillStyle = 'rgba(253, 224, 71, 0.35)';
   for (let i = 0; i < 6; i++) {
     const starX = (i * 260 + 60) % W;
     const starY = (100 + i * 150 + Math.sin(Date.now() * 0.001 + i) * 15) % H;
@@ -1076,8 +1069,7 @@ function drawBackground() {
     ctx.fillText('⭐', starX, starY);
   }
 
-  // Curved Dark Floor Arc at bottom
-  ctx.fillStyle = '#100324';
+  ctx.fillStyle = '#0f0222';
   ctx.beginPath();
   ctx.moveTo(-100, H);
   ctx.quadraticCurveTo(W / 2, H - 45, W + 100, H);
@@ -1099,13 +1091,11 @@ function draw() {
     drawCuteRealisticFruit(h.x, h.y, h.r, h.type, false, h.angle, h.halfSide);
   }
 
-  // Poster Energy Blade Slash Trail
   for (const s of slashes) {
     ctx.save();
     const alpha = s.life / 0.18;
     ctx.globalAlpha = alpha;
 
-    // Outer Intense Golden Glow
     ctx.strokeStyle = 'rgba(255, 140, 0, 0.85)';
     ctx.lineWidth = 22;
     ctx.lineCap = 'round';
@@ -1114,7 +1104,6 @@ function draw() {
     ctx.lineTo(s.x2, s.y2);
     ctx.stroke();
 
-    // Mid Yellow Bright Flare
     ctx.strokeStyle = '#fff044';
     ctx.lineWidth = 11;
     ctx.beginPath();
@@ -1122,7 +1111,6 @@ function draw() {
     ctx.lineTo(s.x2, s.y2);
     ctx.stroke();
 
-    // Core White Beam
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 4;
     ctx.beginPath();
@@ -1141,6 +1129,21 @@ function draw() {
     ctx.fillText(p.char, p.x, p.y);
     ctx.restore();
   }
+
+  // Draw Small Floating Action Notifications
+  for (const n of floatingNotices) {
+    ctx.save();
+    const alpha = Math.max(0, n.life / n.maxLife);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = n.color;
+    ctx.strokeStyle = '#0f0224';
+    ctx.lineWidth = 3.5;
+    ctx.font = 'bold 21px "Lilita One", "Fredoka", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.strokeText(n.text, n.x, n.y);
+    ctx.fillText(n.text, n.x, n.y);
+    ctx.restore();
+  }
 }
 
 function gameLoop(timestamp) {
@@ -1155,7 +1158,7 @@ function gameLoop(timestamp) {
   requestAnimationFrame(gameLoop);
 }
 
-// --- Mobile Audio Unlock & Interaction Listeners ---
+// --- Interaction & Event Listeners ---
 function handleUserInteraction() {
   audio.init();
   if (isRunning && !isPaused && !audio.isPlayingBgm) {
@@ -1212,23 +1215,49 @@ window.addEventListener('focus', () => {
   handleUserInteraction();
 });
 
-btnStart.addEventListener('click', () => {
-  handleUserInteraction();
-  startGame();
-});
+if (btnHelp) {
+  btnHelp.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openHelp();
+  });
+}
 
-btnPause.addEventListener('click', () => {
-  pauseGame();
-});
+if (btnCloseHelp) {
+  btnCloseHelp.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeHelp();
+  });
+}
 
-btnResume.addEventListener('click', () => {
-  handleUserInteraction();
-  resumeGame();
-});
+if (btnGotIt) {
+  btnGotIt.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeHelp();
+  });
+}
 
-btnRestart.addEventListener('click', () => {
-  handleUserInteraction();
-  startGame();
-});
+if (btnPause) {
+  btnPause.addEventListener('click', (e) => {
+    e.stopPropagation();
+    pauseGame();
+  });
+}
 
-draw();
+if (btnResume) {
+  btnResume.addEventListener('click', (e) => {
+    e.stopPropagation();
+    handleUserInteraction();
+    resumeGame();
+  });
+}
+
+if (btnRestart) {
+  btnRestart.addEventListener('click', (e) => {
+    e.stopPropagation();
+    handleUserInteraction();
+    startGame();
+  });
+}
+
+// Start game directly on load (Playfield First Hyper-Casual Design)
+startGame();

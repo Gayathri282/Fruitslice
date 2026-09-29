@@ -3,93 +3,106 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Fruit Slice Drop - Fun Arcade Game</title>
+  <title>Fruit Slice Drop - Minimal Arcade Game</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Fullscreen Playgrid Canvas -->
+  <!-- Fullscreen Playfield Canvas -->
   <canvas id="gameCanvas"></canvas>
 
-  <!-- Top HUD Bar -->
-  <div id="hud">
-    <div class="hud-card">
-      <div class="hud-title">SCORE</div>
-      <div class="hud-value" id="scoreDisplay">0</div>
+  <!-- Minimal Compact Top HUD Bar -->
+  <header id="hud">
+    <div class="hud-left">
+      <div class="game-logo">
+        <span class="logo-fruit">FRUIT</span>
+        <span class="logo-slice">SLICE</span>
+      </div>
     </div>
 
     <div class="hud-center">
-      <div class="hud-card">
-        <div class="hud-title">LEVEL</div>
-        <div class="hud-value" id="levelDisplay">1</div>
+      <div class="hud-pill">
+        <span class="hud-label">SCORE</span>
+        <span class="hud-val" id="scoreDisplay">0</span>
       </div>
-      <button class="pause-btn" id="btnPause" title="Pause Game">⏸</button>
+      <div class="hud-pill">
+        <span class="hud-label">BEST</span>
+        <span class="hud-val" id="bestScoreDisplay">0</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">LVL</span>
+        <span class="hud-val" id="levelDisplay">1</span>
+      </div>
+      <div class="hud-pill combo-pill hidden" id="comboContainer">
+        <span class="hud-val" id="comboDisplay">0x</span>
+      </div>
     </div>
 
-    <div class="hud-card">
-      <div class="hud-title">COMBO</div>
-      <div class="hud-value" id="comboDisplay">0</div>
+    <div class="hud-right">
+      <button class="icon-btn btn-help" id="btnHelp" title="How to Play" aria-label="Help">?</button>
+      <button class="icon-btn btn-pause" id="btnPause" title="Pause Game" aria-label="Pause">⏸</button>
     </div>
-  </div>
+  </header>
 
-  <!-- Floating Pop Notices & Level Up Banner -->
-  <div id="popNotice">NICE SLICE!</div>
-  <div id="levelBanner">⭐ LEVEL 2! ⭐</div>
+  <!-- Compact Toast Notification for Level Up -->
+  <div id="levelToast" class="hidden">⭐ LEVEL 2!</div>
 
-  <!-- Start Screen Overlay -->
-  <div class="overlay" id="startOverlay">
-    <div class="modal-card poster-card">
-      <!-- 3D Poster Logo Title -->
-      <div class="poster-logo">
-        <div class="logo-word word-fruit">
-          <span>F</span><span>R</span><span>U</span><span>I</span><span>T</span>
-          <span class="leaf-badge">🍃</span>
+  <!-- Help / How to Play Modal Overlay -->
+  <div class="overlay hidden" id="helpOverlay">
+    <div class="modal-card compact-card">
+      <button class="close-btn" id="btnCloseHelp" title="Close">×</button>
+      <h2 class="modal-title">How to Play</h2>
+      <div class="help-list">
+        <div class="help-item">
+          <span class="help-icon">🎮</span>
+          <span><strong>Swipe / Tap</strong> to slice falling fruits</span>
         </div>
-        <div class="logo-word word-slice">
-          <span>S</span><span>L</span><span>I</span><span>C</span><span>E</span>
+        <div class="help-item">
+          <span class="help-icon">🍉</span>
+          <span><strong>Slice Combos</strong> for bonus multipliers</span>
+        </div>
+        <div class="help-item">
+          <span class="help-icon">💣</span>
+          <span><strong>Avoid Bombs!</strong> Hitting one ends the game</span>
+        </div>
+        <div class="help-item">
+          <span class="help-icon">⭐</span>
+          <span><strong>Level Up</strong> by scoring high points</span>
         </div>
       </div>
-
-      <!-- Cute Floating Fruits Showcase Row -->
-      <div class="fruit-showcase">
-        <span class="showcase-fruit f-apple">🍎</span>
-        <span class="showcase-fruit f-watermelon">🍉</span>
-        <span class="showcase-fruit f-orange">🍊</span>
-        <span class="showcase-fruit f-strawberry">🍓</span>
-        <span class="showcase-fruit f-pineapple">🍍</span>
-      </div>
-
-      <p class="modal-desc">Slash sweet fruits, trigger super combos, and level up! Avoid sneaky bombs!</p>
-      <button class="btn-primary" id="btnStart">PLAY NOW!</button>
-      <div class="tip-text">Tap anywhere, swipe, or press Spacebar</div>
+      <button class="btn-primary btn-sm" id="btnGotIt">GOT IT!</button>
     </div>
   </div>
 
   <!-- Pause Screen Overlay -->
   <div class="overlay hidden" id="pauseOverlay">
-    <div class="modal-card poster-card">
-      <div class="card-icon">⏸️</div>
-      <h1 class="poster-heading">GAME PAUSED</h1>
-      <p class="modal-desc">Take a little breather! Ready to get back into the fruit slicing action?</p>
-      <button class="btn-primary" id="btnResume">RESUME GAME</button>
+    <div class="modal-card compact-card">
+      <div class="card-icon-sm">⏸️</div>
+      <h2 class="modal-title">GAME PAUSED</h2>
+      <p class="modal-desc-sm">Need a moment? Jump right back in!</p>
+      <button class="btn-primary" id="btnResume">RESUME</button>
     </div>
   </div>
 
   <!-- Game Over Overlay -->
   <div class="overlay hidden" id="gameOverOverlay">
-    <div class="modal-card poster-card">
-      <div class="card-icon">🎉</div>
-      <h1 class="poster-heading">GREAT JOB!</h1>
-      <p class="modal-desc" id="gameOverDesc">Game Over! You played awesome!</p>
+    <div class="modal-card compact-card">
+      <div class="card-icon-sm">🎉</div>
+      <h2 class="modal-title" id="gameOverTitle">GAME OVER</h2>
+      <p class="modal-desc-sm" id="gameOverDesc">Try again to beat your record!</p>
       
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="lbl">FINAL SCORE</div>
-          <div class="val" id="finalScore">0</div>
+      <div class="stats-compact">
+        <div class="stat-pill">
+          <span class="lbl">SCORE</span>
+          <span class="val" id="finalScore">0</span>
         </div>
-        <div class="stat-box">
-          <div class="lbl">MAX LEVEL</div>
-          <div class="val" id="finalLevel">1</div>
+        <div class="stat-pill">
+          <span class="lbl">BEST</span>
+          <span class="val" id="finalBest">0</span>
+        </div>
+        <div class="stat-pill">
+          <span class="lbl">LEVEL</span>
+          <span class="val" id="finalLevel">1</span>
         </div>
       </div>
 
